@@ -1,6 +1,6 @@
-A CRUD MERN stack application :
+MERN stack application :
 
-Anime-Card
+Anime-Card v2.0
 
 It shows 90's kids most favourable thing i.e. collecting cards, playing with them, comapring them, trading them, etc.
 
