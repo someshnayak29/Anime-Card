@@ -7,17 +7,22 @@ const postSchema = mongoose.Schema({
 
     title: String,
     message: String,
+    name: String,
     creator: String,
     tags: [String],
     selectedFile: String, // base 64 image
-    likeCount: {
+    /*likeCount: {
         // not number straightaway as we want it to have additional info i.e. intial value
         type: Number,
         default: 0 //initial value
+    },*/
+    likes: {
+        type : [String], // i.e. array of strings
+        default : [],
     },
     createdAt: {
         type: Date,
-        default: new Date()
+        default: new Date(),
     },
 });
 

@@ -9,10 +9,10 @@ import {
 import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, updatePost } from "../../actions/posts";
+import { spacing } from "@mui/system";
 
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
-    creator: "",
     title: "",
     message: "",
     tags: "",
@@ -24,6 +24,7 @@ const Form = ({ currentId, setCurrentId }) => {
   ); // fetching from redux store
 
   const dispatch = useDispatch(); // This allows us to dispatch actions
+  const user = JSON.parse(localStorage.getItem('profile'));
 
   useEffect(() => {
     if (post) setPostData(post); // if post changes just change it
@@ -34,9 +35,9 @@ const Form = ({ currentId, setCurrentId }) => {
 
     if (currentId) {
       // if we have a currentId we are not going to dispatch createPost rather
-      dispatch(updatePost(currentId, postData));
+      dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
     } else {
-      dispatch(createPost(postData));
+      dispatch(createPost({ ...postData, name: user?.result?.name }));
     }
     clear();
   };
@@ -44,7 +45,6 @@ const Form = ({ currentId, setCurrentId }) => {
   const clear = () => {
     setCurrentId(null);
     setPostData({
-      creator: "",
       title: "",
       message: "",
       tags: "",
@@ -56,11 +56,21 @@ const Form = ({ currentId, setCurrentId }) => {
     spacing: [0, 1, 2],
   });
 
+  if(!user?.result?.name){
+    return(
+      <Paper sx = {{ margin: spacing(2) }}>
+        <Typography variant="h6" align="center">
+          Please Sign In to create your own Anime Card and like other's Anime Cards.
+        </Typography>
+      </Paper>
+    );
+  }
+
   return (
     //paper is like a <div> with withish background
     <Paper
       sx={(theme) => ({
-        padding: theme.spacing(2),
+        padding: (theme) => theme.spacing(2),
       })}
     >
       <form
@@ -76,7 +86,7 @@ const Form = ({ currentId, setCurrentId }) => {
 
           (theme) => ({
             "& .MuiTextField-root": {
-              margin: theme.spacing(1),
+              margin: (theme) => theme.spacing(1),
             },
           }),
         ]}
@@ -84,18 +94,6 @@ const Form = ({ currentId, setCurrentId }) => {
         <Typography variant="h6" align="center">
           {currentId ? "Editing" : "Creating"} a Memory
         </Typography>
-
-        <TextField
-          name="creator"
-          variant="outlined"
-          label="Creator"
-          margin="normal"
-          fullWidth
-          value={postData.creator}
-          onChange={(e) =>
-            setPostData({ ...postData, creator: e.target.value })
-          }
-        />
 
         <TextField
           name="title"

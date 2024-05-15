@@ -3,7 +3,8 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors';
 // although export name is router we can give any name in import it will receive router only
-import postRoutes from './routes/posts.js'
+import postRoutes from './routes/posts.js';
+import userRoutes from './routes/users.js';
 import dotenv from 'dotenv';
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cors()); // put this above use routes
 
 //set up starting path for all the routes inside posts.js
 app.use('/posts', postRoutes); // this means every route inside posts.js will start from /posts
+app.use('/user', userRoutes); // route for users
 
 // connect to database
 

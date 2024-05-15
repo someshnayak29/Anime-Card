@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import moment from "moment";
@@ -18,6 +19,19 @@ import { deletePost, getPosts, likePost } from '../../../actions/posts';
 const Post = ({ post, setCurrentId }) => {
 
   const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('profile'));
+  const Likes = () => {
+    if (post.likes.length > 0) {
+      return post.likes.find((like) => like === (user?.result?.googleId || user?.result?._id))
+        ? (
+          <><ThumbUpAltIcon fontSize="small" />&nbsp;{post.likes.length > 2 ? `You and ${post.likes.length - 1} others` : `${post.likes.length} like${post.likes.length > 1 ? 's' : ''}` }</>
+        ) : (
+          <><ThumbUpOffAltIcon fontSize="small" />&nbsp;{post.likes.length} {post.likes.length === 1 ? 'Like' : 'Likes'}</>
+        );
+    }
+
+    return <><ThumbUpOffAltIcon fontSize="small" />&nbsp;Like</>;
+  };
 
   const handleDeletion = (_id) => {
     dispatch(deletePost(_id));
@@ -47,11 +61,12 @@ const Post = ({ post, setCurrentId }) => {
       <div
         style={{ position: "absolute", top: "20px", left: "20px", color: "white" }}
       >
-        <Typography variant="h6">{post.creator}</Typography>
+        <Typography variant="h6">{post.name}</Typography>
         <Typography variant="body2">
           {moment(post.createdAt).fromNow()}
         </Typography>
       </div>
+      {(user?.result?.googleId === post.creator || user?.result?._id === post.creator) && (
       <div
         style={{
             position: "absolute",
@@ -64,6 +79,7 @@ const Post = ({ post, setCurrentId }) => {
           <MoreHorizIcon fontSize="default" />
         </Button>
       </div>
+      )}
       <div
         style = {{
             display: "flex",
@@ -96,15 +112,15 @@ const Post = ({ post, setCurrentId }) => {
         justifyContent: 'space-between'
       }}
       >
-        <Button size="small" color="primary" onClick={() => dispatch(likePost(post._id))}>
-          <ThumbUpAltIcon fontSize="small" />
-          &nbsp; Like &nbsp;
-          {post.likeCount}
+        <Button size="small" color="primary" disabled={!user?.result} onClick={() => dispatch(likePost(post._id))}>
+          <Likes />
         </Button>
-        <Button size="small" color="primary" onClick={() => handleDeletion(post._id)}>
+        {(user?.result?.googleId === post.creator || user?.result?._id === post.creator) && (
+          <Button size="small" color="primary" onClick={() => handleDeletion(post._id)}>
           <DeleteIcon fontSize="small" />
           Delete
         </Button>
+        )}  
       </CardActions>
     </Card>
   );
